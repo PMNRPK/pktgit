@@ -4,6 +4,7 @@ SPDX-License-Identifier: GPL-2.0-only
 """
 
 import json
+import os
 import sys
 
 from setuptools import setup, find_packages
@@ -30,6 +31,10 @@ install_requirements = install_requires
 setup_requirements = []
 test_requirements = tests_require
 
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name='ml-git',
     version=get_version(),
@@ -37,16 +42,16 @@ setup(
     license='GNU General Public License v2.0',
     author="Sebastien Tandel",
     description='ml-git: version control for ML artefacts',
-    long_description='ml-git: a Distributed Version Control for ML artefacts',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     install_requires=install_requirements,
     setup_requires=setup_requirements,
-    test_suite="tests",
+    test_suite='tests',
     package_dir={'': '.'},
     packages=find_packages(),
     keywords='version control, cloud storage, machine learning, datasets, labels, models',
     platforms='Any',
     zip_safe=True,
-    include_package_data=True,
     package_data={'ml_git': ['version.info']},
     classifiers=[
         'Development Status :: 4 - Beta',
