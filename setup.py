@@ -40,7 +40,7 @@ setup(
     },
     license='GNU General Public License v2.0',
     author='Sebastien Tandel',
-    description='ml-git: version control for ML artefacts',
+    description='ML-Git: version control for ML artefacts',
     long_description='ml-git: a Distributed Version Control for ML artefacts',
     install_requires=install_requirements,
     setup_requires=setup_requirements,
