@@ -36,6 +36,39 @@ Download ML-Git from repository and execute commands below:
     sudo python3.6 setup.py install
     ```
 
+### How to uninstall
+
+**With pip:**
+```
+pip uninstall ml-git
+```
+
+**Manually:**
+
+- Windows:
+
+    ```
+    del %LocalAppData%\Programs\Python\PythonXY\Scripts\ml-git*
+    del %LocalAppData%\Programs\Python\PythonXY\Lib\site-packages\ml_git*
+    ```
+    **Note**: Change PythonXY to your python version. Example: Python36
+
+- Linux:
+
+    *Local User*:
+    ```
+    rm $HOME/.local/bin/ml-git
+    rm -rf $HOME/.local/lib/pythonX.Y/site-packages/ml_git*
+    ```
+  
+    *Root User*:
+    ```
+    sudo rm -rf /usr/local/lib/pythonX.Y/dist-packages/ml_git*
+    sudo rm -rf /usr/local/lib/pythonX.Y/dist-packages/ml-git*
+    sudo rm /usr/local/bin/ml-git
+    ```
+    **Note**: Change pythonX.Y to your python version. Example: python3.6
+
 ### How to configure
 
 1 - As ML-Git leverages git to manage ML entities metadata, it is necessary to configure user name and email address:
