@@ -30,14 +30,13 @@ class LocalEntityManager:
     def __init__(self):
         self._manager = None
 
-    def __init_manager(self, type_entity, log_known_errors=True):
+    def __init_manager(self, type_entity):
         try:
             get_root_path()
             config = config_load()
             if not config[type_entity]['git']:
-                if log_known_errors:
-                    log.warn(output_messages['ERROR_REPOSITORY_NOT_FOUND_FOR_ENTITY'] % type_entity,
-                             class_name=LocalEntityManager.__name__)
+                log.warn(output_messages['ERROR_REPOSITORY_NOT_FOUND_FOR_ENTITY'] % type_entity,
+                         class_name=LocalEntityManager.__name__)
                 return
             self._manager = MetadataManager(config, repo_type=type_entity)
             if not self._manager.check_exists():
@@ -47,9 +46,6 @@ class LocalEntityManager:
 
     def get_entities(self):
         """Get a list of entities found in config.yaml.
-
-        Args:
-            log_known_errors (bool): Set if known errors in initiation should be logged for each entity [default: True].
 
         Returns:
             list of class Entity.
