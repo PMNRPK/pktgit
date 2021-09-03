@@ -30,12 +30,13 @@ class LocalEntityManager:
     def __init__(self):
         self._manager = None
 
-    def __init_manager(self, type_entity):
+    def __init_manager(self, type_entity, log_known_errors=True):
         try:
             get_root_path()
             config = config_load()
             if not config[type_entity]['git']:
-                log.warn(output_messages['ERROR_REPOSITORY_NOT_FOUND'], class_name=LocalEntityManager.__name__)
+                if log_known_errors:
+                    log.warn(output_messages['ERROR_REPOSITORY_NOT_FOUND'], class_name=LocalEntityManager.__name__)
                 return
             self._manager = MetadataManager(config, repo_type=type_entity)
             if not self._manager.check_exists():
@@ -43,8 +44,11 @@ class LocalEntityManager:
         except Exception as e:
             log.error(e, class_name=LocalEntityManager.__name__)
 
-    def get_entities(self):
+    def get_entities(self, log_known_errors=True):
         """Get a list of entities found in config.yaml.
+
+        Args:
+            log_known_errors (bool): Set if known errors in initiation should be logged for each entity [default: True].
 
         Returns:
             list of class Entity.
@@ -53,7 +57,7 @@ class LocalEntityManager:
         metadata_repository = namedtuple('Repository', ['private', 'full_name', 'ssh_url', 'html_url', 'owner'])
         metadata_owner = namedtuple('Owner', ['email', 'name'])
         for type_entity in EntityType:
-            self.__init_manager(type_entity.value)
+            self.__init_manager(type_entity.value, log_known_errors=log_known_errors)
             if not self._manager:
                 continue
             repository = metadata_repository(False, '', '', '', metadata_owner('', ''))
@@ -161,17 +165,19 @@ class LocalEntityManager:
             relationships = export_relationships_to_dot([entity_versions[0]], relationships, export_path)
         return relationships
 
-    def get_project_entities_relationships(self, export_type=FileType.JSON.value, export_path=None):
+    def get_project_entities_relationships(self, export_type=FileType.JSON.value, export_path=None,
+                                           log_known_errors=True):
         """Get a list of relationships for all project entities.
 
         Args:
             export_type (str): Set the format of the return [default: json].
             export_path (str): Set the path to export metrics to a file.
+            log_known_errors (bool): Set if known errors while getting entities should be logged [default: True].
 
         Returns:
             list of EntityVersionRelationships.
         """
-        project_entities = self.get_entities()
+        project_entities = self.get_entities(log_known_errors=log_known_errors)
         if not project_entities:
             return []
 
@@ -216,10 +222,12 @@ class LocalEntityManager:
         return final_file_path
 
     def display_graph(self, export_path, is_dot=False):
-        entity_relationships = self.get_project_entities_relationships(export_type=FileType.DOT.value)
+        entity_relationships = self.get_project_entities_relationships(export_type=FileType.DOT.value,
+                                                                       log_known_errors=False)
 
         if not entity_relationships:
             log.info(output_messages['INFO_ENTITIES_RELATIONSHIPS_NOT_FOUND'], class_name=LocalEntityManager.__name__)
+            return
 
         if is_dot and export_path:
             final_file_path = os.path.join(export_path, '{}.dot'.format(RELATIONSHIP_GRAPH_FILENAME))
