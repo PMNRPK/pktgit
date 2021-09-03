@@ -36,7 +36,8 @@ class LocalEntityManager:
             config = config_load()
             if not config[type_entity]['git']:
                 if log_known_errors:
-                    log.warn(output_messages['ERROR_REPOSITORY_NOT_FOUND'], class_name=LocalEntityManager.__name__)
+                    log.warn(output_messages['ERROR_REPOSITORY_NOT_FOUND_FOR_ENTITY'] % type_entity,
+                             class_name=LocalEntityManager.__name__)
                 return
             self._manager = MetadataManager(config, repo_type=type_entity)
             if not self._manager.check_exists():
@@ -44,7 +45,7 @@ class LocalEntityManager:
         except Exception as e:
             log.error(e, class_name=LocalEntityManager.__name__)
 
-    def get_entities(self, log_known_errors=True):
+    def get_entities(self):
         """Get a list of entities found in config.yaml.
 
         Args:
@@ -57,7 +58,7 @@ class LocalEntityManager:
         metadata_repository = namedtuple('Repository', ['private', 'full_name', 'ssh_url', 'html_url', 'owner'])
         metadata_owner = namedtuple('Owner', ['email', 'name'])
         for type_entity in EntityType:
-            self.__init_manager(type_entity.value, log_known_errors=log_known_errors)
+            self.__init_manager(type_entity.value)
             if not self._manager:
                 continue
             repository = metadata_repository(False, '', '', '', metadata_owner('', ''))
@@ -165,19 +166,17 @@ class LocalEntityManager:
             relationships = export_relationships_to_dot([entity_versions[0]], relationships, export_path)
         return relationships
 
-    def get_project_entities_relationships(self, export_type=FileType.JSON.value, export_path=None,
-                                           log_known_errors=True):
+    def get_project_entities_relationships(self, export_type=FileType.JSON.value, export_path=None):
         """Get a list of relationships for all project entities.
 
         Args:
             export_type (str): Set the format of the return [default: json].
             export_path (str): Set the path to export metrics to a file.
-            log_known_errors (bool): Set if known errors while getting entities should be logged [default: True].
 
         Returns:
             list of EntityVersionRelationships.
         """
-        project_entities = self.get_entities(log_known_errors=log_known_errors)
+        project_entities = self.get_entities()
         if not project_entities:
             return []
 
@@ -222,8 +221,7 @@ class LocalEntityManager:
         return final_file_path
 
     def display_graph(self, export_path, is_dot=False):
-        entity_relationships = self.get_project_entities_relationships(export_type=FileType.DOT.value,
-                                                                       log_known_errors=False)
+        entity_relationships = self.get_project_entities_relationships(export_type=FileType.DOT.value)
 
         if not entity_relationships:
             log.info(output_messages['INFO_ENTITIES_RELATIONSHIPS_NOT_FOUND'], class_name=LocalEntityManager.__name__)

@@ -218,6 +218,7 @@ output_messages = {
     'ERROR_ENTITY_NEEDS_CATATEGORY': 'You must place at least one category in the entity .spec file',
     'ERROR_INVALID_DATASET_SPEC': 'Error: invalid dataset spec (Missing name). It should look something like this:\n%s',
     'ERROR_REPOSITORY_NOT_FOUND': 'No repositories found, verify your configurations!',
+    'ERROR_REPOSITORY_NOT_FOUND_FOR_ENTITY': 'No repositories found for %s, verify your configurations!',
     'ERROR_WORKER_FAILURE': 'Worker failure - [%s] -- [%d] attempts',
     'ERROR_INVALID_YAML_CONFIG': '.ml-git/config.yaml invalid. It should look something like this:\n%s',
     'ERROR_NOT_INITIALIZED': 'The %s has not been initialized',
